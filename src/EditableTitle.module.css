@@ -1,0 +1,17 @@
+.editableContainer {
+  flex-grow: 1; /* Taaki yeh poori jagah le le */
+  padding: 4px 8px; /* Thodi padding taaki double-click aasan ho */
+}
+
+.editInput {
+  width: 100%;
+  box-sizing: border-box; /* Taaki padding width ke andar rahe */
+  padding: 4px 8px;
+  font-size: 1rem;
+  border: 1px solid #007bff;
+  border-radius: 6px;
+  background-color: #3a3a3a;
+  color: #e0e0e0;
+  outline: none;
+  font-weight: 600; /* Taaki font mota dikhe, jaisa active item ka hai */
+}
