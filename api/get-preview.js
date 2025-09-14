@@ -1,3 +1,4 @@
+import { getLinkPreview } from 'link-preview-js';
 // This is our FINAL, simplified Vercel Serverless Function
 import { getLinkPreview } from 'link-preview-js';
 
