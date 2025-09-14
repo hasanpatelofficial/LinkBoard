@@ -2,19 +2,20 @@
 .appContainer {
   display: flex;
   height: 100vh;
-  background-color: #191919;
-  color: #e0e0e0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  background-color: var(--background-primary);
+  color: var(--text-primary);
 }
 
 /* --- Left Sidebar --- */
 .sidebar {
   width: 280px;
-  background-color: #1f1f1f;
+  background-color: var(--background-secondary);
   padding: 24px;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #363636;
+  justify-content: space-between;
+  border-right: 1px solid var(--border-primary);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .sidebarHeader {
@@ -23,11 +24,28 @@
   margin-bottom: 24px;
 }
 
+/* --- YAHAN SE SEARCH STYLES SHURU --- */
+.searchContainer {
+  margin-bottom: 16px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  background-color: var(--background-tertiary);
+  color: var(--text-primary);
+  box-sizing: border-box; /* Important for padding */
+}
+/* --- SEARCH STYLES KHATAM --- */
+
 .addBoardButton {
   width: 100%;
   padding: 12px;
   margin-bottom: 24px;
-  background-color: #007bff;
+  background-color: var(--accent-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -38,7 +56,7 @@
 }
 
 .addBoardButton:hover {
-  background-color: #0056b3;
+  background-color: var(--accent-primary-hover);
 }
 
 .boardList {
@@ -61,17 +79,17 @@
 }
 
 .boardItem:hover {
-  background-color: #333;
+  background-color: var(--background-hover);
 }
 
 .boardItem.active {
-  background-color: #2a2a2a;
+  background-color: var(--accent-primary);
   color: white;
   font-weight: 600;
 }
 
 .deleteIcon {
-  color: #777;
+  color: var(--text-secondary);
   visibility: hidden;
   opacity: 0;
   transition: all 0.2s;
@@ -81,8 +99,29 @@
   visibility: visible;
   opacity: 1;
 }
+
 .deleteIcon:hover {
   color: #ff4d4d;
+}
+
+.themeToggle {
+  background: none;
+  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  margin-top: 24px;
+}
+
+.themeToggle:hover {
+  background-color: var(--background-hover);
+  color: var(--text-primary);
 }
 
 /* --- Right Main Area --- */
@@ -100,21 +139,21 @@
   margin-bottom: 32px;
 }
 
-/* --- YAHAN SE NAYI STYLES SHURU --- */
 .cardForm {
   display: flex;
   margin-bottom: 32px;
-  gap: 12px; /* Thoda gap */
+  gap: 12px;
 }
 
 .cardInput {
   flex-grow: 1;
   padding: 12px;
   font-size: 1rem;
-  border: 1px solid #444;
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
-  background-color: #2c2c2c;
-  color: #e0e0e0;
+  background-color: var(--background-tertiary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 .cardSubmitButton {
@@ -127,15 +166,25 @@
   cursor: pointer;
   transition: opacity 0.2s;
 }
+
 .cardSubmitButton:hover {
   opacity: 0.8;
 }
 
 .noteButton {
-  background-color: #007bff; /* Blue */
+  background-color: var(--accent-primary);
 }
 
 .taskButton {
-  background-color: #28a745; /* Green */
+  background-color: var(--accent-success);
 }
-/* --- NAYI STYLES KHATAM --- */
+
+.loadingScreen, .emptyState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+  color: var(--text-secondary);
+  text-align: center;
+}
