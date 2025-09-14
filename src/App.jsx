@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where, writeBatch, orderBy } from 'firebase/firestore';
 import { db, auth, provider } from './firebase';
-import { signInWithPopup, onAuthStateChanged } from "firebase/auth";
+import { signInWithPopup, signInWithRedirect, onAuthStateChanged, getRedirectResult } from "firebase/auth";
 import { AnimatePresence } from 'framer-motion';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import styles from './App.module.css';
@@ -22,6 +22,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    getRedirectResult(auth).catch((error) => console.error("Error getting redirect result", error));
+  }, []);
 
   useEffect(() => {
     document.body.setAttribute('data-theme', theme);
@@ -59,14 +63,24 @@ function App() {
     setCards(cardList);
 
     if (boardList.length > 0) {
-      setSelectedBoardId(boardList[0].id);
+      if (!boardList.find(b => b.id === selectedBoardId)) {
+        setSelectedBoardId(boardList[0].id);
+      }
     } else {
       setSelectedBoardId(null);
     }
     setIsLoading(false);
   };
 
-  const signInWithGoogle = () => { signInWithPopup(auth, provider).catch((error) => console.error(error)); };
+  const signInWithGoogle = () => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      signInWithRedirect(auth, provider);
+    } else {
+      signInWithPopup(auth, provider).catch((error) => console.error(error));
+    }
+  };
+  
   const handleAddBoard = async (e) => { e.preventDefault(); if (!newBoardTitle.trim() || !user) return; const docRef = await addDoc(collection(db, 'boards'), { title: newBoardTitle, userId: user.uid }); const newBoard = { id: docRef.id, title: newBoardTitle, userId: user.uid }; setBoards([...boards, newBoard]); setSelectedBoardId(newBoard.id); setNewBoardTitle(''); setIsModalOpen(false); };
   const handleAddCard = async (type) => { if (!newCardContent.trim() || !user) return; const currentBoardCards = cards.filter(c => c.boardId === selectedBoardId); const newOrder = currentBoardCards.length; const newCardData = { boardId: selectedBoardId, content: newCardContent, completed: false, type: type, order: newOrder, userId: user.uid }; const docRef = await addDoc(collection(db, 'cards'), newCardData); setCards([...cards, { id: docRef.id, ...newCardData }]); setNewCardContent(''); };
   const handleDeleteBoard = async (boardIdToDelete) => { if (!user || !window.confirm('Are you sure you want to delete this board?')) return; await deleteDoc(doc(db, 'boards', boardIdToDelete)); const q = query(collection(db, "cards"), where("boardId", "==", boardIdToDelete)); const querySnapshot = await getDocs(q); const batch = writeBatch(db); querySnapshot.forEach((doc) => { batch.delete(doc.ref); }); await batch.commit(); const updatedBoards = boards.filter(b => b.id !== boardIdToDelete); setBoards(updatedBoards); setCards(cards.filter(c => c.boardId !== boardIdToDelete)); if (selectedBoardId === boardIdToDelete) { setSelectedBoardId(updatedBoards.length > 0 ? updatedBoards[0].id : null); } };
@@ -130,7 +144,7 @@ function App() {
             <button className={styles.addBoardButton} onClick={() => setIsModalOpen(true)}>+ Add New Board</button>
             <ul className={styles.boardList}>
               {filteredBoards.map(board => (
-                <li key={board.id} className={`${styles.boardItem} ${selectedBoardId === board.id ? styles.active : ''}`} onClick={() => setSearchTerm('') || setSelectedBoardId(board.id)}>
+                <li key={board.id} className={`${styles.boardItem} ${selectedBoardId === board.id ? styles.active : ''}`} onClick={() => { setSearchTerm(''); setSelectedBoardId(board.id); }}>
                   <EditableTitle initialTitle={board.title} onUpdate={(newTitle) => handleUpdateBoard(board.id, newTitle)} />
                   <FaTrash className={styles.deleteIcon} onClick={(e) => { e.stopPropagation(); handleDeleteBoard(board.id); }} />
                 </li>
