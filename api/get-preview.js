@@ -1,7 +1,8 @@
-import { gotScraping } from 'got-scraping'; // Nayi powerful library
-import cheerio from 'cheerio';
+// This is our FINAL, simplified Vercel Serverless Function
+import { getLinkPreview } from 'link-preview-js';
 
 export default async function handler(request, response) {
+  // 1. Get the URL from the query parameter
   const { url } = request.query;
 
   if (!url) {
@@ -9,37 +10,20 @@ export default async function handler(request, response) {
   }
 
   try {
-    // 1. Ab hum 'gotScraping' ka istemal karenge jo bot detection ko bypass karta hai
-    const scrapedResponse = await gotScraping({
-      url: url,
-      headerGeneratorOptions: {
-        browsers: [{ name: 'chrome' }], // Yeh real browser ki tarah behave karega
-        operatingSystems: [{ name: 'windows' }],
-      },
-    });
+    // 2. Use the new library to get the preview
+    const data = await getLinkPreview(url);
 
-    const html = scrapedResponse.body;
-    const $ = cheerio.load(html);
-
-    // 2. Metadata extract karna bilkul same rahega
-    const getMetaTag = (name) => {
-      return (
-        $(`meta[property="og:${name}"]`).attr('content') ||
-        $(`meta[name="${name}"]`).attr('content')
-      );
-    };
-
+    // 3. Extract the required metadata
     const metadata = {
-      title: $('title').first().text() || getMetaTag('title'),
-      description: getMetaTag('description'),
-      image: getMetaTag('image'),
+      title: data.title,
+      description: data.description,
+      image: data.images[0], // Get the first image
     };
     
-    // 3. Metadata wapas bhejo
+    // 4. Send the metadata back to our React app
     return response.status(200).json(metadata);
 
   } catch (error) {
-    console.error(error); // Error ko server par log karo
     return response.status(500).json({ error: `An error occurred: ${error.message}` });
   }
 }
