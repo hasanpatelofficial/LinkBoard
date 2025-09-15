@@ -188,3 +188,56 @@
   color: var(--text-secondary);
   text-align: center;
 }
+/* --- YAHAN SE MOBILE STYLES SHURU --- */
+@media (max-width: 768px) {
+  .appContainer {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    transform: translateX(-100%); /* Shuru mein screen ke bahar */
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000; /* Taaki yeh content ke upar aaye */
+    width: 280px;
+  }
+
+  .sidebar.open {
+    transform: translateX(0); /* Jab 'open' class ho to screen par aa jaaye */
+  }
+
+  .mainArea {
+    padding: 24px;
+  }
+
+  .mainTitle {
+    font-size: 2rem;
+  }
+  
+  .cardForm {
+    flex-direction: column;
+  }
+
+  .menuButton, .closeButton {
+    display: block; /* Hamburger icon ko dikhao */
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: absolute;
+    top: 24px;
+    z-index: 1001;
+  }
+  
+  .menuButton {
+    left: 24px;
+  }
+  
+  .closeButton {
+    right: 24px;
+  }
+}

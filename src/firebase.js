@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, GoogleAuthProvider } from "firebase/auth"; // Nayi lines
+// auth persistence ko import kiya
+import { getAuth, GoogleAuthProvider, browserSessionPersistence, setPersistence } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3eK9nrsCrPBqkQrWrc_vRTHwi4rKucAI",
@@ -12,8 +13,12 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-// Ab hum 3 cheezein export karenge
+// Yeh line ensure karegi ki login state tab tak hi rahe jab tak browser tab khula hai
+// Isse "stuck" state ki problem solve ho sakti hai
+setPersistence(auth, browserSessionPersistence); 
+
 export const db = getFirestore(app);
-export const auth = getAuth(app); // Authentication service
-export const provider = new GoogleAuthProvider(); // Google login provider
+export { auth }; // auth ko aese export kiya
+export const provider = new GoogleAuthProvider();
